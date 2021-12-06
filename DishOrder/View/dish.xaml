@@ -1,0 +1,86 @@
+﻿<Page x:Class="DishOrder.View.dish"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:DishOrder.ViewModel"
+      xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+      xmlns:misc="clr-namespace:DishOrder.Converter"
+      mc:Ignorable="d" 
+      d:DesignHeight="700" d:DesignWidth="850"
+      Title="Блюда">
+
+    <Page.Resources>
+        <misc:MoneyConverter x:Key="MoneyConverter" />
+    </Page.Resources>
+
+    <Grid d:DataContext="{d:DesignInstance Type=local:DishViewModel, IsDesignTimeCreatable=True}">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="0.8*" />
+        </Grid.ColumnDefinitions>
+        <TextBlock FontSize="13" Text="Категория" Margin="234,0,161,640"/>
+        <ComboBox ItemsSource="{Binding Context.DishCategories.Local}" SelectedItem="{Binding SelectedDishCategory}" Margin="302,0,10,0" Height="24" VerticalAlignment="Top">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock>
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}{0}">
+                                <Binding Path="CategoryName"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="SelectionChanged">
+                    <i:InvokeCommandAction Command="{Binding SelectionDishCategory}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </ComboBox>
+        <ListBox Grid.Column="0" ItemsSource="{Binding Dishes}"
+                 SelectedItem="{Binding SelectedDish}" Margin="0,24,0,0">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock FontSize="18" Text="{Binding Path=DishName}"/>
+                        <TextBlock Text="{Binding Path=Cost, Converter={StaticResource MoneyConverter}}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="SelectionChanged">
+                    <i:InvokeCommandAction Command="{Binding SelectionChangedCommand}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </ListBox>
+
+        <StackPanel Grid.Column="1" Margin="0,0,0,544">
+            <TextBlock Text="Категория блюда"/>
+            <ComboBox ItemsSource="{Binding Context.DishCategories.Local}" SelectedItem="{Binding DishInfo.DishCategory}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock>
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}{0}">
+                                    <Binding Path="CategoryName"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <TextBlock Text="Название блюда" />
+            <TextBox Text="{Binding DishInfo.DishName}"/>
+            <TextBlock Text="Цена"/>
+            <TextBox Name="Cost" Text="{Binding DishInfo.Cost}" PreviewTextInput="Money" MaxLength="7"/>
+        </StackPanel>
+
+        <StackPanel Grid.Column="1" Margin="0,123,0,486" Orientation="Horizontal">
+            <Button VerticalAlignment="Top" Content="Изменить" Command="{Binding UpdateDishCommand}" Width="70" Height="30" Grid.Column="1" Margin="60,0,0,0"/>
+            <Button VerticalAlignment="Top" Content="Добавить" Command="{Binding AddDishCommand}" Width="70" Height="30" Grid.Column="1" Margin="20,0,0,0"/>
+            <Button VerticalAlignment="Top" Content="Удалить" Command="{Binding RemoveDishCommand}" Width="70" Height="30" Grid.Column="1" Margin="20,0,0,0"/>
+        </StackPanel>
+    </Grid>
+</Page>

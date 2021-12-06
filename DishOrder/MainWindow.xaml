@@ -1,0 +1,32 @@
+﻿<Window x:Class="DishOrder.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DishOrder.View"
+        mc:Ignorable="d"
+        Title="DishOrder" Height="700" Width="1050">
+    
+    <Window.Resources>
+        <Style TargetType="DataGrid">
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="CanUserAddRows" Value="False"/>
+            <Setter Property="CanUserDeleteRows" Value="False"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Frame x:Name="frame" Grid.Column="1" Height="700" Width="850"/>
+
+        <StackPanel Grid.Column="0" Width="150">
+            <Button Click="Dishes" Width="150" Height="25" Margin="0,15,0,0" Content="Блюда" VerticalAlignment="Top"/>
+            <Button Click="Orders" Width="150" Height="25" Margin="0,15,0,0" Content="Заказы" VerticalAlignment="Top"/>
+            <Button Click="Users" Width="150" Height="25" Margin="0,15,0,0" Content="Повара" VerticalAlignment="Top"/>
+        </StackPanel>
+
+    </Grid>
+</Window>

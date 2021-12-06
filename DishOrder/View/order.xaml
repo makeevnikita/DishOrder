@@ -1,0 +1,148 @@
+﻿<Page x:Class="DishOrder.View.order"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:DishOrder.ViewModel"
+      xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+      xmlns:misc="clr-namespace:DishOrder.Converter"
+      mc:Ignorable="d" 
+      d:DesignHeight="700" d:DesignWidth="850"
+      Title="Заказы">
+
+    <Page.Resources>
+        <misc:PaidConverter x:Key="PaidConverter"/>
+        <misc:CookedConverter x:Key="CookedConverter"/>
+        <misc:MoneyConverter x:Key="MoneyConverter"/>
+        <misc:DateConverter x:Key="DateConverter"/>
+    </Page.Resources>
+
+
+    <Grid d:DataContext="{d:DesignInstance Type=local:OrderViewModel, IsDesignTimeCreatable=True}">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="0.8*" />
+        </Grid.ColumnDefinitions>
+
+        <ListBox Grid.Column="0" ItemsSource="{Binding Context.Orders.Local}"
+                 SelectedItem="{Binding SelectedOrder, Mode=TwoWay}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock FontSize="18" Text="{Binding Path=Paid, Converter={StaticResource PaidConverter}}"/>
+                        <TextBlock FontSize="18" Text="{Binding Path=Cooked, Converter={StaticResource CookedConverter}}"/>
+                        <TextBlock>
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}{1} {0} {2}">
+                                    <Binding Path="Cook.Name"></Binding>
+                                    <Binding Path="Cook.Surname"></Binding>
+                                    <Binding Path="Cook.Patronymic"></Binding>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                        <TextBlock Text="{Binding Path=Table.TableName}"/>
+                        <TextBlock Text="{Binding Path=TotalCost, Converter={StaticResource MoneyConverter}}"/>
+                        <TextBlock Text="{Binding Path=Date, Converter={StaticResource DateConverter}}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="SelectionChanged">
+                    <i:InvokeCommandAction Command="{Binding SelectionChangedCommand}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </ListBox>
+
+        <StackPanel Grid.Column="1" Margin="0,0,0,300">
+            <TextBlock Text="Выбранный заказ"/>
+            <CheckBox Content="Оплачен" IsChecked="{Binding OrderInfo.Paid}"/>
+            <TextBlock Text="Повар"/>
+            <ComboBox ItemsSource="{Binding Context.Users.Local}" SelectedItem="{Binding OrderInfo.Cook}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock>
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}{1} {0} {2}">
+                                    <Binding Path="Name"></Binding>
+                                    <Binding Path="Surname"></Binding>
+                                    <Binding Path="Patronymic"></Binding>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <CheckBox Content="Приготовлен" IsChecked="{Binding OrderInfo.Cooked}"/>
+            <TextBlock Text="Столик"/>
+            <ComboBox ItemsSource="{Binding Context.Tables.Local}" SelectedItem="{Binding OrderInfo.Table}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock>
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}{0}">
+                                    <Binding Path="TableName"></Binding>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <TextBlock Text="Итоговая цена"/>
+            <TextBlock Text="{Binding Path=OrderInfo.TotalCost, Converter={StaticResource MoneyConverter}}"/>
+        </StackPanel>
+
+        <DataGrid IsReadOnly="True" Grid.Column="1" Margin="5,200,191,203"
+                  ItemsSource="{Binding OrderDish}" AutoGenerateColumns="False" SelectedItem="{Binding SelectedOrderDish}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Блюдо" Binding="{Binding Dish.DishName}" Width="*"/>
+                <DataGridTextColumn Header="Количество" Binding="{Binding Count}" Width="*"/>
+            </DataGrid.Columns>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDoubleClick">
+                    <i:InvokeCommandAction Command="{Binding RemoveDishFromOrderCommand}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </DataGrid>
+
+        <DataGrid IsReadOnly="True" Grid.Column="1" Margin="202,256,11,203"
+                  ItemsSource="{Binding Dishes}" AutoGenerateColumns="False" SelectedItem="{Binding SelectedDish}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Блюдо" Binding="{Binding DishName}" Width="*"/>
+                <DataGridTextColumn Header="Цена" Binding="{Binding Cost}" Width="*"/>
+            </DataGrid.Columns>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDoubleClick">
+                    <i:InvokeCommandAction Command="{Binding AddDishToOrderCommand}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </DataGrid>
+
+        <Button Grid.Column="1" VerticalAlignment="Top" Content="Изменить" Command="{Binding UpdateOrderCommand}" Width="70" Height="30" Margin="138,165,170,0"/>
+        <Button Grid.Column="1" VerticalAlignment="Top" Content="Добавить" Command="{Binding AddOrderCommand}" Width="70" Height="30" Margin="288,165,20,0"/>
+        <Button Grid.Column="1" VerticalAlignment="Top" Content="Удалить" Command="{Binding RemoveOrderCommand}" Width="70" Height="30" Margin="213,165,95,0"/>
+        <Button Grid.Column="1" VerticalAlignment="Top" Content="Удалить блюда" Command="{Binding RemoveAllDishesCommand}" Height="30" Margin="13,165,252,0"/>
+        
+        
+
+        <ComboBox Grid.Column="1" ItemsSource="{Binding Context.DishCategories.Local}" SelectedItem="{Binding SelectedDishCategory}" Margin="202,213,40,464">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock>
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}{0}">
+                                <Binding Path="CategoryName"></Binding>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="SelectionChanged">
+                    <i:InvokeCommandAction Command="{Binding SelectionDishCategory}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </ComboBox>
+
+    </Grid>
+</Page>
