@@ -54,7 +54,7 @@
             </i:Interaction.Triggers>
         </ListBox>
 
-        <StackPanel Grid.Column="1" Margin="0,0,0,300">
+        <StackPanel Grid.Column="1">
             <TextBlock Text="Выбранный заказ"/>
             <CheckBox Content="Оплачен" IsChecked="{Binding OrderInfo.Paid}"/>
             <TextBlock Text="Повар"/>
@@ -122,10 +122,9 @@
         <Button Grid.Column="1" VerticalAlignment="Top" Content="Добавить" Command="{Binding AddOrderCommand}" Width="70" Height="30" Margin="288,165,20,0"/>
         <Button Grid.Column="1" VerticalAlignment="Top" Content="Удалить" Command="{Binding RemoveOrderCommand}" Width="70" Height="30" Margin="213,165,95,0"/>
         <Button Grid.Column="1" VerticalAlignment="Top" Content="Удалить блюда" Command="{Binding RemoveAllDishesCommand}" Height="30" Margin="13,165,252,0"/>
-        
-        
 
-        <ComboBox Grid.Column="1" ItemsSource="{Binding Context.DishCategories.Local}" SelectedItem="{Binding SelectedDishCategory}" Margin="202,213,40,464">
+        <ComboBox Grid.Column="1" ItemsSource="{Binding Context.DishCategories.Local}"
+                  SelectedItem="{Binding SelectedDishCategory}" Width="120" Height="25" Margin="238,213,20,462">
             <ComboBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock>

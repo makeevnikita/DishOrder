@@ -161,6 +161,8 @@ namespace DishOrder.ViewModel
                     {
                         Context.Orders.Remove(SelectedOrder);
                         Context.SaveChanges();
+
+                        OrderDish.Clear();
                     }
                 }));
 
@@ -246,7 +248,7 @@ namespace DishOrder.ViewModel
 
                 tmpDish = item.FKDish;
 
-                Context.Orders.Where(w => w.OrderId == SelectedOrder.OrderId).FirstOrDefault().TotalCost
+                Context.Orders.Where(w => w.OrderId == OrderId).FirstOrDefault().TotalCost
                 +=
                 Context.Dishes.Where(w => w.DishId == item.FKDish).FirstOrDefault().Cost
                 *
